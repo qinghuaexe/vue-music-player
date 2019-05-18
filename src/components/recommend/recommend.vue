@@ -1,6 +1,6 @@
 <template>
   <div>
-    推荐歌曲
+    推荐歌1
   </div>
 </template>
 <script>
