@@ -1,9 +1,15 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div v-if="recommends.length" class="slider-wrapper">
+      <div
+        v-if="recommends.length"
+        class="slider-wrapper"
+      >
         <slider>
-          <div v-for="(item, index) in recommends" :key="index">
+          <div
+            v-for="(item, index) in recommends"
+            :key="index"
+          >
             <a :href="item.linkUrl">
               <img :src="item.picUrl">
             </a>
@@ -18,7 +24,7 @@
   </div>
 </template>
 <script>
-import { getRecommend } from '../../api/recommend'
+import { getRecommend, getDiskList } from '../../api/recommend'
 import { ERR_OK } from '../../api/config'
 import Slider from '../../base/slider/slider'
 export default {
@@ -29,13 +35,21 @@ export default {
   },
   created() {
     this._getRecommend()
+    this._getDiskList()
   },
   methods: {
     _getRecommend() {
-      getRecommend().then((res) => {
+      getRecommend().then(res => {
         if (res.code === ERR_OK) {
           this.recommends = res.data.slider
           console.log(res.data)
+        }
+      })
+    },
+    _getDiskList() {
+      getDiskList().then(res => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list)
         }
       })
     }
@@ -46,7 +60,7 @@ export default {
 }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '../../common/stylus/variable'
+@import '../../common/stylus/variable';
 
 .recommend {
   position: fixed;
