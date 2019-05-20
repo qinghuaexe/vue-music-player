@@ -1,21 +1,10 @@
 <template>
-  <div
-    class="slider"
-    ref="slider"
-  >
-    <div
-      class="slider-group"
-      ref="sliderGroup"
-    >
+  <div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
       <slot></slot>
     </div>
     <div class="dots">
-      <span
-        class="dot"
-        v-for="(item,index) in dots"
-        :key="index"
-        :class="{active:currentPageIndex===index}"
-      ></span>
+      <span class="dot" v-for="(item,index) in dots" :key="index" :class="{active:currentPageIndex===index}"></span>
     </div>
   </div>
 </template>
@@ -118,7 +107,7 @@ export default {
 }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '../../common/stylus/variable'
+@import '../../common/stylus/variable';
 
 .slider {
   min-height: 1px;
