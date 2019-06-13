@@ -90,7 +90,7 @@ export default {
         name: 'move',
         animation,
         presets: {
-          duration: 1000,
+          duration: 400,
           easing: 'linear'
         }
       })
@@ -100,8 +100,18 @@ export default {
       animations.unregisterAnimation('move')
       this.$refs.cdWrapper.style.animation = ''
     },
-    leave(el, done) {},
-    afterLeave() {},
+    leave(el, done) {
+      this.$refs.cdWrapper.style.transition = 'all 0.4s'
+      const { x, y, scale } = this._getPosAndScale()
+      this.$refs.cdWrapper.style['transform'] = `translate3d(${x}px,${y},0) scale(${scale})`
+      this.$refs.cdWrapper.style['webkitTransform'] = `translate3d(${x}px,${y},0) scale(${scale})`
+      this.$refs.cdWrapper.addEventListener('transitionend', done)
+    },
+    afterLeave() {
+      this.$refs.cdWrapper.style.transition = ''
+      this.$refs.cdWrapper.style['transform'] = ''
+      this.$refs.cdWrapper.style['webkitTransform'] = ''
+    },
     _getPosAndScale() {
       const targetWidth = 40
       const paddingLeft = 40
