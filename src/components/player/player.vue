@@ -26,13 +26,13 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
+            <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
-            <div class="icon i-ringht">
+            <div class="icon i-ringht" :class="disableCls">
               <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
@@ -59,13 +59,18 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"></audio>
   </div>
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import animations from 'create-keyframe-animation'
 export default {
+  data() {
+    return {
+      songReady: false
+    }
+  },
   computed: {
     playIcon() {
       return this.playing ? 'icon-pause' : 'icon-play'
@@ -75,6 +80,9 @@ export default {
     },
     cdCls() {
       return this.playing ? 'play' : 'play pause'
+    },
+    disableCls() {
+      return this.songReady ? '' : 'disable'
     },
     ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing', 'currentIndex'])
   },
@@ -86,6 +94,9 @@ export default {
       this.setFullScreen(true)
     },
     prev() {
+      if (!this.songReady) {
+        return
+      }
       let index = this.currentIndex - 1
       if (index === -1) {
         index = this.playlist.length - 1
@@ -94,8 +105,12 @@ export default {
       if (!this.playing) {
         this.togglePlaying()
       }
+      this.songReady = false
     },
     next() {
+      if (!this.songReady) {
+        return
+      }
       let index = this.currentIndex + 1
       if (index === this.playlist.length) {
         index = 0
@@ -104,6 +119,13 @@ export default {
       if (!this.playing) {
         this.togglePlaying()
       }
+      this.songReady = false
+    },
+    ready() {
+      this.songReady = true
+    },
+    error() {
+      this.songReady = true
     },
     enter(el, done) {
       const { x, y, scale } = this._getPosAndScale()
