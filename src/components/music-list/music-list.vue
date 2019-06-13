@@ -84,9 +84,7 @@ export default {
     back() {
       this.$router.back()
     },
-    ...mapActions([
-      'selectPlay'
-    ])
+    ...mapActions(['selectPlay'])
   },
   watch: {
     scrollY(newY) {

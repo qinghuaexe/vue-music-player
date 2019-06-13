@@ -49,6 +49,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll,
     },
     before(app) {
+      app.get('/getSongVkey', (req, res) => {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            origin: 'https://y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+         }).catch((e) => {
+           console.log(e)
+         })
+      })
       app.get('/getDiskList', (req, res) => {
         const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {

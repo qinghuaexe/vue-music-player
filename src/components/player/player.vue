@@ -131,6 +131,13 @@ export default {
       setFullScreen: 'SET_FULL_SCREEN'
     })
   },
+  // watch: {
+  //   currentSong() {
+  //     this.$nextTick(() => {
+  //       this.$refs.audio.play()
+  //     })
+  //   }
+  // },
   mounted() {
     console.log(this.currentSong)
   }
