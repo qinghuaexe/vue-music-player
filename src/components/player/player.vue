@@ -27,13 +27,13 @@
               <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i @click="prev" class="icon-prev"></i>
             </div>
             <div class="icon i-center">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
             <div class="icon i-ringht">
-              <i class="icon-next"></i>
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -76,7 +76,7 @@ export default {
     cdCls() {
       return this.playing ? 'play' : 'play pause'
     },
-    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing'])
+    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing', 'currentIndex'])
   },
   methods: {
     back() {
@@ -84,6 +84,26 @@ export default {
     },
     open() {
       this.setFullScreen(true)
+    },
+    prev() {
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playlist.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+    },
+    next() {
+      let index = this.currentIndex + 1
+      if (index === this.playlist.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
     },
     enter(el, done) {
       const { x, y, scale } = this._getPosAndScale()
@@ -141,7 +161,8 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     }),
     togglePlaying() {
       this.setPlayingState(!this.playing)
