@@ -48,7 +48,6 @@ export default {
       list.forEach(item => {
         let { musicData } = item
         getSongVkey(musicData.songmid).then(res => {
-          console.log(res)
           const songVkey = res.data.items[0].vkey
           if (musicData.songid && musicData.albummid) {
             ret.push(createSong(musicData, songVkey))
