@@ -6,7 +6,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from '../../api/singer'
-import { getSongVkey } from '../../api/recommend'
+import { getSongVkey } from '../../api/song'
 import { ERR_OK } from '../../api/config'
 import { createSong } from '../../common/js/song'
 import MusicList from '../music-list/music-list'
@@ -47,18 +47,15 @@ export default {
       let ret = []
       list.forEach(item => {
         let { musicData } = item
-        if (musicData.songid && musicData.albummid) {
-          getSongVkey(musicData.songmid).then(res => {
-            if (res.code === ERR_OK) {
-              const sVkey = res.req_0.data.midurlinfo[0]
-              const songVkey = sVkey.vkey
-              const newSong = createSong(musicData, songVkey)
-              console.log(newSong)
-              ret.push(newSong)
-            }
-          })
-        }
+        getSongVkey(musicData.songmid).then(res => {
+          console.log(res)
+          const songVkey = res.data.items[0].vkey
+          if (musicData.songid && musicData.albummid) {
+            ret.push(createSong(musicData, songVkey))
+          }
+        })
       })
+      console.log(ret)
       return ret
     }
   }
