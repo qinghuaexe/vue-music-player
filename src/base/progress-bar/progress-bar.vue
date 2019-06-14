@@ -43,7 +43,11 @@ export default {
       this._triggerPrecent()
     },
     progressClick(e) {
-      this._offset(e.offsetX)
+      const rect = this.$refs.progressBar.getBoundingClientRect()
+      const offsetWidth = e.pageX - rect.left
+      this._offset(offsetWidth)
+      // 当我们点击progressBtn按钮的时候获取e.offsetX位置不对
+      // this._offset(e.offsetX)
       this._triggerPrecent()
     },
     _triggerPrecent() {
