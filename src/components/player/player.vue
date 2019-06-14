@@ -1,7 +1,7 @@
 <template>
-  <div class="player" v-show="playlist.length>0">
+  <div class="player" v-if="playlist.length>0">
     <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
-      <div class="normal-player" v-show="fullScreen">
+      <div class="normal-player" ref="player" v-show="fullScreen">
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image">
         </div>
@@ -50,7 +50,7 @@
       </div>
     </transition>
     <transition name="mini">
-      <div class="mini-player" v-show="!fullScreen" @click="open">
+      <div class="mini-player" v-if="!fullScreen" @click="open">
         <div class="icon">
           <img :class="cdCls" width="40" height="40" :src="currentSong.image">
         </div>
@@ -78,6 +78,7 @@ import ProgressBar from '../../base/progress-bar/progress-bar'
 import ProgressCircle from '../../base/progress-circle/progress-circle'
 import { playMode } from '../../common/js/config'
 import { shuffle } from '../../common/js/util'
+
 export default {
   data() {
     return {
@@ -109,7 +110,15 @@ export default {
     iconMode() {
       return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
     },
-    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing', 'currentIndex', 'mode', 'sequenceList'])
+    ...mapGetters([
+      'fullScreen',
+      'playlist',
+      'currentSong',
+      'playing',
+      'currentIndex',
+      'mode',
+      'sequenceList'
+    ])
   },
   methods: {
     back() {
@@ -168,7 +177,7 @@ export default {
     },
     format(interval) {
       interval = interval | 0
-      const minute = interval / 60 | 0
+      const minute = (interval / 60) | 0
       const second = this._pad(interval % 60)
       return `${minute}:${second}`
     },
@@ -185,7 +194,7 @@ export default {
       this.setPlayList(list)
     },
     resetCurrentIndex(list) {
-      let index = list.findIndex((item) => {
+      let index = list.findIndex(item => {
         return item.id === this.currentSong.id
       })
       this.setCurrentIndex(index)
@@ -225,7 +234,7 @@ export default {
           easing: 'linear'
         }
       })
-      animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+      animations.runAnimation(this.$refs.cdWrapper, 'move').then(() => done())
     },
     afterEnter() {
       animations.unregisterAnimation('move')
@@ -234,9 +243,11 @@ export default {
     leave(el, done) {
       this.$refs.cdWrapper.style.transition = 'all 0.4s'
       const { x, y, scale } = this._getPosAndScale()
-      this.$refs.cdWrapper.style['transform'] = `translate3d(${x}px,${y},0) scale(${scale})`
-      this.$refs.cdWrapper.style['webkitTransform'] = `translate3d(${x}px,${y},0) scale(${scale})`
-      this.$refs.cdWrapper.addEventListener('transitionend', done)
+      this.$refs.cdWrapper.style['webkitTransform'] = `translate3d(${x}px,$S{y}px,0) scale(${scale})`
+      this.$refs.cdWrapper.style['transform'] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+      this.$refs.cdWrapper.addEventListener('transitionend', () => {
+        done()
+      })
     },
     afterLeave() {
       this.$refs.cdWrapper.style.transition = ''
@@ -275,13 +286,12 @@ export default {
         return
       }
       this.$nextTick(() => {
-        console.log(this.currentSong)
         this.$refs.audio.play()
       })
     },
     playing(newPlaying) {
-      const audio = this.$refs.audio
       this.$nextTick(() => {
+        const audio = this.$refs.audio
         newPlaying ? audio.play() : audio.pause()
       })
     }
@@ -372,6 +382,7 @@ export default {
           top: 0;
           width: 80%;
           height: 100%;
+          transition: all 0.4s ease 0s;
 
           .cd {
             width: 100%;
