@@ -379,6 +379,9 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
         this.getLyric()
