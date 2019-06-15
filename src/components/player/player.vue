@@ -135,15 +135,7 @@ export default {
     iconMode() {
       return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
     },
-    ...mapGetters([
-      'fullScreen',
-      'playlist',
-      'currentSong',
-      'playing',
-      'currentIndex',
-      'mode',
-      'sequenceList'
-    ])
+    ...mapGetters(['fullScreen', 'playlist', 'currentSong', 'playing', 'currentIndex', 'mode', 'sequenceList'])
   },
   created() {
     this.touch = {}
@@ -173,13 +165,17 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex - 1
-      if (index === -1) {
-        index = this.playlist.length - 1
-      }
-      this.setCurrentIndex(index)
-      if (!this.playing) {
-        this.togglePlaying()
+      if (this.playlist.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -187,13 +183,17 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index === this.playlist.length) {
-        index = 0
-      }
-      this.setCurrentIndex(index)
-      if (!this.playing) {
-        this.togglePlaying()
+      if (this.playlist.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -239,15 +239,21 @@ export default {
       return num
     },
     getLyric() {
-      this.currentSong.getLyric().then((lyric) => {
-        this.currentLyric = new Lyric(lyric, this.handleLyric)
-        if (this.playing) {
-          this.currentLyric.play()
-        }
-        console.log(this.currentLyric)
-      })
+      this.currentSong
+        .getLyric()
+        .then(lyric => {
+          this.currentLyric = new Lyric(lyric, this.handleLyric)
+          if (this.playing) {
+            this.currentLyric.play()
+          }
+        })
+        .catch(() => {
+          this.currentLyric = null
+          this.playLyric = ''
+          this.currentLineNum = 0
+        })
     },
-    handleLyric({lineNum, txt}) {
+    handleLyric({ lineNum, txt }) {
       this.currentLineNum = lineNum
       if (lineNum > 5) {
         let lineEl = this.$refs.lyricLine[lineNum - 5]
@@ -274,7 +280,10 @@ export default {
         return
       }
       const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
-      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+      const offsetWidth = Math.min(
+        0,
+        Math.max(-window.innerWidth, left + deltaX)
+      )
       this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
       this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
       this.$refs.lyricList.$el.style[transitionDuration] = 0
@@ -349,8 +358,7 @@ export default {
     leave(el, done) {
       this.$refs.cdWrapper.style.transition = 'all 0.4s'
       const { x, y, scale } = this._getPosAndScale()
-      this.$refs.cdWrapper.style['webkitTransform'] = `translate3d(${x}px,$S{y}px,0) scale(${scale})`
-      this.$refs.cdWrapper.style['transform'] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+      this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
       this.$refs.cdWrapper.addEventListener('transitionend', () => {
         done()
       })
@@ -400,10 +408,10 @@ export default {
       if (this.currentLyric) {
         this.currentLyric.stop()
       }
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.audio.play()
         this.getLyric()
-      })
+      }, 1000)
     },
     playing(newPlaying) {
       this.$nextTick(() => {
