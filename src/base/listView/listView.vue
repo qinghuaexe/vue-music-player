@@ -19,7 +19,6 @@
       </ul>
     </div>
   </div>
-
 </template>
 <script>
 import Scroll from '../scroll/scroll'
@@ -64,6 +63,9 @@ export default {
     },
     _scrollTo(index) {
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
+    },
+    refresh() {
+      this.$refs.listview.refresh()
     }
   },
   components: {
