@@ -42,8 +42,6 @@ export default {
     _normalizeSongs(list) {
       let ret = []
       list.forEach(musicData => {
-        console.log(musicData)
-        console.log(musicData.mid)
         getSongVkey(musicData.mid).then(res => {
           const songVkey = res.data.items[0].vkey
           if (musicData.id && musicData.album.id) {
