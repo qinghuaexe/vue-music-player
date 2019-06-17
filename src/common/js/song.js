@@ -43,6 +43,19 @@ export function createSong(musicData, songVkey) {
   })
 }
 
+export function createRecomSong (musicData, songVkey) {
+  return new Song({
+    id: musicData.id,
+    mid: musicData.mid,
+    singer: filterSinger(musicData.singer),
+    name: musicData.name,
+    album: musicData.album.name,
+    duration: musicData.interval,
+    image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.album.mid}.jpg?max_age=2592000`,
+    url: `http://dl.stream.qqmusic.qq.com/C400${musicData.mid}.m4a?fromtag=38&guid=5931742855&vkey=${songVkey}`
+  })
+}
+
 function filterSinger(singer) {
   let ret = []
   if (!singer) {
