@@ -15,7 +15,9 @@
 <script>
 import { search } from '../../api/search'
 import { ERR_OK } from '../../api/config'
-import { filterSinger } from '../../common/js/song'
+// import { filterSinger, createSong } from '../../common/js/song'
+import { createSong } from '../../common/js/song'
+import { getSongVkey } from '../../api/song'
 
 const TYPE_SINGER = 'singer'
 export default {
@@ -45,7 +47,7 @@ export default {
       if (item.type === TYPE_SINGER) {
         return item.singername
       } else {
-        return `${item.songname} - ${filterSinger(item.singer)}`
+        return `${item.name} - ${item.singer}`
       }
     },
     getIconCls(item) {
@@ -56,23 +58,34 @@ export default {
       }
     },
     search() {
-      search(this.query, this.page, this.showSinger).then(res => {
-        if (res.code === ERR_OK) {
-          console.log(res.data)
-          this.result = this._genResult(res.data)
-          console.log(this.result)
-        }
-      })
+      search(this.query, this.page, this.showSinger)
+        .then(res => {
+          if (res.code === ERR_OK) {
+            return this._genResult(res.data)
+          }
+        })
+        .then(result => {
+          this.result = result
+          console.log(result)
+        })
     },
-    _genResult(data) {
+    async _genResult(data) {
       let ret = []
       if (data.zhida && data.zhida.singerid) {
-        ret.push({...data.zhida, ...{type: TYPE_SINGER}})
+        ret.push({ ...data.zhida, ...{ type: TYPE_SINGER } })
       }
       if (data.song) {
-        ret = ret.concat(data.song.list)
+        ret = ret.concat(await this._normalizeList(data.song.list))
       }
       return ret
+    },
+    _normalizeList(list) {
+      const promises = list.map(musicData => {
+        return getSongVkey(musicData.songmid).then(res => {
+          return musicData.songid && musicData.albumid ? createSong(musicData, res.data.items[0].vkey) : null
+        })
+      })
+      return Promise.all(promises)
     }
   }
 }
