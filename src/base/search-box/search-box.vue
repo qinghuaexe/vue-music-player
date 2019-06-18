@@ -22,6 +22,11 @@ export default {
     clear() {
       this.query = ''
     }
+  },
+  created() {
+    this.$watch('query', (newQuery) => {
+      this.$emit('query', newQuery)
+    })
   }
 }
 </script>

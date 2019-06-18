@@ -3,13 +3,34 @@
     <div class="search-box-wrapper">
       <search-box></search-box>
     </div>
+    <div class="shortcut-wrapper">
+      <div class="shortcut">
+        <div class="hot-key">
+          <ul></ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import SearchBox from '../../base/search-box/search-box'
+import { getHotKey } from '../../api/search'
+import { ERR_OK } from '../../api/config'
 export default {
   components: {
     SearchBox
+  },
+  created() {
+    this._getHotKey()
+  },
+  methods: {
+    _getHotKey() {
+      getHotKey().then(res => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.hotkey)
+        }
+      })
+    }
   }
 }
 </script>
