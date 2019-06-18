@@ -49,6 +49,20 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       poll: config.dev.poll,
     },
     before(app) {
+      app.get('/search', (req, res) => {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        axios.get(url, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            Origin: 'https://y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+         }).catch((e) => {
+           console.log(e)
+         })
+      })
       app.get('/getTopList', (req, res) => {
         const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
         axios.get(url, {

@@ -43,7 +43,7 @@ export function createSong(musicData, songVkey) {
   })
 }
 
-export function createRecomSong (musicData, songVkey) {
+export function createRecomSong(musicData, songVkey) {
   return new Song({
     id: musicData.id,
     mid: musicData.mid,
@@ -56,7 +56,7 @@ export function createRecomSong (musicData, songVkey) {
   })
 }
 
-function filterSinger(singer) {
+export function filterSinger(singer) {
   let ret = []
   if (!singer) {
     return ''
