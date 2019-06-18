@@ -1,5 +1,5 @@
 <template>
-  <div class="suggest">
+  <scroll :data="result" :pullup="pullup" @scrollToEnd="searchMore" class="suggest">
     <ul class="suggest-list">
       <li class="suggest-item" v-for="(item, index) in result" :key="index">
         <div class="icon">
@@ -9,23 +9,33 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading v-show="hasMore" :title="''"></loading>
     </ul>
-  </div>
+  </scroll>
 </template>
 <script>
 import { search } from '../../api/search'
 import { ERR_OK } from '../../api/config'
-// import { filterSinger, createSong } from '../../common/js/song'
 import { createSong } from '../../common/js/song'
 import { getSongVkey } from '../../api/song'
+import Scroll from '../../base/scroll/scroll'
+import Loading from '../../base/loading/loading'
+
+const perpage = 20
 
 const TYPE_SINGER = 'singer'
 export default {
   data() {
     return {
       page: 1,
-      result: []
+      result: [],
+      pullup: true,
+      hasMore: true
     }
+  },
+  components: {
+    Scroll,
+    Loading
   },
   props: {
     query: {
@@ -57,17 +67,30 @@ export default {
         return 'icon-music'
       }
     },
-    search() {
-      search(this.query, this.page, this.showSinger)
-        .then(res => {
-          if (res.code === ERR_OK) {
-            return this._genResult(res.data)
-          }
-        })
-        .then(result => {
-          this.result = result
-          console.log(result)
-        })
+    checkMore(data) {
+      const song = data.song
+      if (!song.list.length || song.curnum + song.curpage * perpage > song.totalnum) {
+        this.hasMore = false
+      }
+    },
+    async searchMore() {
+      if (!this.hasMore) {
+        return
+      }
+      this.page++
+      const res = await search(this.query, this.page, this.showSinger, perpage)
+      if (res.code === ERR_OK) {
+        const newResult = await this._genResult(res.data)
+        this.result = this.result.concat(newResult)
+      }
+    },
+    async search() {
+      this.hasMore = true
+      const res = await search(this.query, this.page, this.showSinger, perpage)
+      if (res.code === ERR_OK) {
+        this.result = await this._genResult(res.data)
+        this.checkMore(res.data)
+      }
     },
     async _genResult(data) {
       let ret = []

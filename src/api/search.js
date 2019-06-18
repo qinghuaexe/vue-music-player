@@ -11,19 +11,21 @@ export function getHotKey() {
   return jsonp(url, data, options)
 }
 
-export function search(query, page, zhida) {
+export function search(query, page, zhida, perPage) {
   const url = '/search'
 
   const data = Object.assign({}, commonParams, {
     w: query,
     p: page,
     catZhida: zhida ? 1 : 0,
+    perPage,
     zhidaqu: 1,
     t: 0,
     flag: 1,
     ie: 'utf-8',
     sem: 1,
     aggr: 0,
+    n: perPage,
     remoteplace: 'txt.mqq.all',
     uin: 0,
     needNewCode: 1,
