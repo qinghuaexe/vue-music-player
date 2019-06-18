@@ -1,12 +1,29 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" />
-    <i class="icon-dismiss"></i>
+    <input class="box" v-model="query" :placeholder="placeholder"/>
+    <i v-show="query" @click="clear" class="icon-dismiss"></i>
   </div>
 </template>
 <script>
-export default {}
+export default {
+  props: {
+    placeholder: {
+      type: String,
+      default: '搜索歌曲、歌手'
+    }
+  },
+  data() {
+    return {
+      query: ''
+    }
+  },
+  methods: {
+    clear() {
+      this.query = ''
+    }
+  }
+}
 </script>
 <style lang="stylus" scoped>
 @import '../../common/stylus/variable';
