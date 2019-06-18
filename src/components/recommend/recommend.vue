@@ -76,7 +76,6 @@ export default {
     _getDiskList() {
       getDiskList().then(res => {
         if (res.code === ERR_OK) {
-          console.log(res.data.list)
           this.discList = res.data.list
         }
       })
