@@ -44,7 +44,8 @@ export default {
     addQuery(query) {
       this.$refs.searchBox.setQuery(query)
     }
-  }
+  },
+  mounted() {}
 }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
