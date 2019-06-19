@@ -47,7 +47,6 @@ export default {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
           this.hotKey = res.data.hotkey.slice(0, 10)
-          console.log(this.hotKey)
         }
       })
     },
@@ -58,8 +57,8 @@ export default {
 }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
-@import '../../common/stylus/variable'
-@import '../../common/stylus/mixin'
+@import '../../common/stylus/variable';
+@import '../../common/stylus/mixin';
 
 .search {
   .search-box-wrapper {

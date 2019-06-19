@@ -21,7 +21,7 @@ import { getSongVkey } from '../../api/song'
 import Scroll from '../../base/scroll/scroll'
 import Loading from '../../base/loading/loading'
 import Singer from '../../common/js/singer'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 
 const perpage = 20
 
@@ -63,11 +63,14 @@ export default {
         })
         this.$router.push({ path: `search/${singer.id}` })
         this.setSinger(singer)
+      } else {
+        this.insertSong(item)
       }
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
     }),
+    ...mapActions(['insertSong']),
     getDisplayName(item) {
       if (item.type === TYPE_SINGER) {
         return item.singername
