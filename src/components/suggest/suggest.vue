@@ -11,6 +11,9 @@
       </li>
       <loading v-show="hasMore" :title="''"></loading>
     </ul>
+    <div v-show="!hasMore && !result.length" class="no-result-wrapper">
+      <no-result title="抱歉，暂无搜索内容"></no-result>
+    </div>
   </scroll>
 </template>
 <script>
@@ -22,6 +25,7 @@ import Scroll from '../../base/scroll/scroll'
 import Loading from '../../base/loading/loading'
 import Singer from '../../common/js/singer'
 import { mapMutations, mapActions } from 'vuex'
+import NoResult from '../../base/no-result/no-result'
 
 const perpage = 20
 
@@ -37,7 +41,8 @@ export default {
   },
   components: {
     Scroll,
-    Loading
+    Loading,
+    NoResult
   },
   props: {
     query: {
@@ -72,7 +77,7 @@ export default {
     }),
     ...mapActions(['insertSong']),
     getDisplayName(item) {
-      if (item.type === TYPE_SINGER) {
+      if (item.type && item.type === TYPE_SINGER) {
         return item.singername
       } else {
         return `${item.name} - ${item.singer}`
@@ -124,7 +129,9 @@ export default {
     _normalizeList(list) {
       const promises = list.map(musicData => {
         return getSongVkey(musicData.songmid).then(res => {
-          return musicData.songid && musicData.albumid ? createSong(musicData, res.data.items[0].vkey) : null
+          if (musicData.songid && musicData.albumid) {
+            return createSong(musicData, res.data.items[0].vkey)
+          }
         })
       })
       return Promise.all(promises)
