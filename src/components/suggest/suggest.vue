@@ -1,5 +1,5 @@
 <template>
-  <scroll :data="result" :pullup="pullup" @scrollToEnd="searchMore" class="suggest">
+  <scroll :data="result" :beforeScroll="beforeScroll" :pullup="pullup" @scrollToEnd="searchMore" @beforeScroll="listScroll" class="suggest">
     <ul class="suggest-list">
       <li @click="selectItem(item)" class="suggest-item" v-for="(item, index) in result" :key="index">
         <div class="icon">
@@ -36,7 +36,8 @@ export default {
       page: 1,
       result: [],
       pullup: true,
-      hasMore: true
+      hasMore: true,
+      beforeScroll: true
     }
   },
   components: {
@@ -60,6 +61,9 @@ export default {
     }
   },
   methods: {
+    listScroll() {
+      this.$emit('listScroll')
+    },
     selectItem(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
