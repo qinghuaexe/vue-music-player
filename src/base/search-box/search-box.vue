@@ -30,7 +30,7 @@ export default {
   created() {
     this.$watch('query', debounce((newQuery) => {
       this.$emit('query', newQuery)
-    }, 200))
+    }, 1000))
   }
 }
 </script>(

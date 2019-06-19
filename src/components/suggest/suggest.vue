@@ -84,7 +84,7 @@ export default {
       }
     },
     getIconCls(item) {
-      if (item.type === TYPE_SINGER) {
+      if (item.type && item.type === TYPE_SINGER) {
         return 'icon-mine'
       } else {
         return 'icon-music'
@@ -129,7 +129,7 @@ export default {
     _normalizeList(list) {
       const promises = list.map(musicData => {
         return getSongVkey(musicData.songmid).then(res => {
-          if (musicData.songid && musicData.albumid) {
+          if (musicData.songid) {
             return createSong(musicData, res.data.items[0].vkey)
           }
         })
