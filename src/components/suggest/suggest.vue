@@ -1,5 +1,5 @@
 <template>
-  <scroll :data="result" :beforeScroll="beforeScroll" :pullup="pullup" @scrollToEnd="searchMore" @beforeScroll="listScroll" class="suggest">
+  <scroll :data="result" :beforeScroll="beforeScroll" :pullup="pullup" @scrollToEnd="searchMore" @beforeScroll="listScroll" class="suggest" ref="suggest">
     <ul class="suggest-list">
       <li @click="selectItem(item)" class="suggest-item" v-for="(item, index) in result" :key="index">
         <div class="icon">
@@ -76,6 +76,9 @@ export default {
         this.insertSong(item)
       }
       this.$emit('select')
+    },
+    refresh() {
+      this.$refs.suggest.refresh()
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
