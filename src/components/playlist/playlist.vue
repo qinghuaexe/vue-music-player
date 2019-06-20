@@ -9,15 +9,15 @@
             <span class="clear"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll ref="listContent" :data="sequenceList" class="list-content">
+        <scroll ref="listContent" :data="sequenceList" class="list-content" :refreshDelay="refreshDelay">
           <ul>
-            <li class="item" v-for="(item, index) in sequenceList" :key="index">
-              <i class="current"></i>
+            <li class="item" ref="listItem" v-for="(item, index) in sequenceList" :key="index" @click="selectItem(item, index)">
+              <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -37,29 +37,68 @@
   </transition>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import Scroll from '../../base/scroll/scroll'
+import { playMode } from '../../common/js/config'
 export default {
   data() {
     return {
-      showFlag: false
+      showFlag: false,
+      refreshDelay: 100
     }
   },
+
   components: {
     Scroll
   },
   computed: {
-    ...mapGetters(['sequenceList'])
+    ...mapGetters(['sequenceList', 'currentSong', 'playlist', 'mode'])
   },
   methods: {
     show() {
       this.showFlag = true
       setTimeout(() => {
         this.$refs.listContent.refresh()
-      }, 20)
+        this.scrollToCurrent(this.currentSong)
+      }, this.refreshDelay)
     },
     hide() {
       this.showFlag = false
+    },
+    getCurrentIcon(item) {
+      if (this.currentSong.id === item.id) {
+        return 'icon-play'
+      }
+      return ''
+    },
+    ...mapMutations({
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayingState: 'SET_PLAYING_STATE'
+    }),
+    selectItem(item, index) {
+      if (this.mode === playMode.random) {
+        index = this.playlist.findIndex(song => {
+          return song.id === item.id
+        })
+      }
+      this.setCurrentIndex(index)
+      this.setPlayingState(true)
+    },
+    scrollToCurrent(current) {
+      const index = this.sequenceList.findIndex(song => {
+        return current.id === song.id
+      })
+      this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+    }
+  },
+  watch: {
+    currentSong(newSong, oldSong) {
+      if (!this.showFlag || newSong.id === oldSong.id) {
+        return
+      }
+      setTimeout(() => {
+        this.scrollToCurrent(newSong)
+      }, 20)
     }
   }
 }
