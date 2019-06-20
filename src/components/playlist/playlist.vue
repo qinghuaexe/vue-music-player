@@ -6,7 +6,7 @@
           <h1 class="title">
             <i class="icon"></i>
             <span class="text"></span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
         <scroll ref="listContent" :data="sequenceList" class="list-content" :refreshDelay="refreshDelay">
@@ -33,6 +33,7 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm ref="confirm" title="是否清空播放列表" @confirm="confirmClear"></confirm>
     </div>
   </transition>
 </template>
@@ -40,6 +41,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import Scroll from '../../base/scroll/scroll'
 import { playMode } from '../../common/js/config'
+import Confirm from '../../base/confirm/confirm'
 export default {
   data() {
     return {
@@ -49,12 +51,20 @@ export default {
   },
 
   components: {
-    Scroll
+    Scroll,
+    Confirm
   },
   computed: {
     ...mapGetters(['sequenceList', 'currentSong', 'playlist', 'mode'])
   },
   methods: {
+    showConfirm() {
+      this.$refs.confirm.show()
+    },
+    confirmClear() {
+      this.deleteSongList()
+      this.$refs.confirm.hide()
+    },
     show() {
       this.showFlag = true
       setTimeout(() => {
@@ -75,7 +85,7 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
     }),
-    ...mapActions(['deleteSong']),
+    ...mapActions(['deleteSong', 'deleteSongList']),
     deleteOne(item) {
       this.deleteSong(item)
       if (!this.playlist.length) {

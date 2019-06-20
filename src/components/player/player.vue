@@ -406,7 +406,6 @@ export default {
   watch: {
     currentSong(newSong, oldSong) {
       if (!newSong.id) {
-        console.log(1)
         return
       }
       if (newSong.id === oldSong.id) {
