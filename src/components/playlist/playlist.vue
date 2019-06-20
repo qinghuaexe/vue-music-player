@@ -10,8 +10,8 @@
           </h1>
         </div>
         <scroll ref="listContent" :data="sequenceList" class="list-content" :refreshDelay="refreshDelay">
-          <ul>
-            <li class="item" ref="listItem" v-for="(item, index) in sequenceList" :key="index" @click="selectItem(item, index)">
+          <transition-group name="list" tag="ul">
+            <li class="item" ref="listItem" v-for="(item, index) in sequenceList" :key="item.id" @click="selectItem(item, index)">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
@@ -21,7 +21,7 @@
                 <i class="icon-delete"></i>
               </span>
             </li>
-          </ul>
+          </transition-group>
         </scroll>
         <div class="list-operate">
           <div class="add">
@@ -75,9 +75,7 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
     }),
-    ...mapActions([
-      'deleteSong'
-    ]),
+    ...mapActions(['deleteSong']),
     deleteOne(item) {
       this.deleteSong(item)
       if (!this.playlist.length) {
