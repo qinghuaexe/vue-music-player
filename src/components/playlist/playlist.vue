@@ -37,7 +37,7 @@
   </transition>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import Scroll from '../../base/scroll/scroll'
 import { playMode } from '../../common/js/config'
 export default {
@@ -75,6 +75,12 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
     }),
+    ...mapActions([
+      'deleteSong'
+    ]),
+    deleteOne(item) {
+      this.deleteSong(item)
+    },
     selectItem(item, index) {
       if (this.mode === playMode.random) {
         index = this.playlist.findIndex(song => {
