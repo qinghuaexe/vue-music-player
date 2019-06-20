@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-if="playlist.length>0">
+  <div class="player" v-show="playlist.length>0">
     <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
       <div class="normal-player" ref="player" v-show="fullScreen">
         <div class="background">
@@ -286,10 +286,7 @@ export default {
         return
       }
       const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
-      const offsetWidth = Math.min(
-        0,
-        Math.max(-window.innerWidth, left + deltaX)
-      )
+      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
       this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
       this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
       this.$refs.lyricList.$el.style[transitionDuration] = 0
@@ -408,11 +405,18 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
+      if (!newSong.id) {
+        console.log(1)
+        return
+      }
       if (newSong.id === oldSong.id) {
         return
       }
       if (this.currentLyric) {
         this.currentLyric.stop()
+        this.currentTime = 0
+        this.playLyric = ''
+        this.currentLineNum = 0
       }
       setTimeout(() => {
         this.$refs.audio.play()
@@ -424,6 +428,13 @@ export default {
         const audio = this.$refs.audio
         newPlaying ? audio.play() : audio.pause()
       })
+    },
+    fullScreen(newVal) {
+      if (newVal) {
+        setTimeout(() => {
+          this.$refs.lyricList.refresh()
+        }, 20)
+      }
     }
   }
 }
