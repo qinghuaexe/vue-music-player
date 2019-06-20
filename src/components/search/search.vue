@@ -4,24 +4,26 @@
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
     <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <ul>
-            <li class="item" v-for="(item, index) in hotKey" :key="index" @click="addQuery(item.k)">
-              <span>{{item.k}}</span>
-            </li>
-          </ul>
+      <scroll class="shortcut" :data="shortcut" ref="shortcut">
+        <div>
+          <div class="hot-key">
+            <ul>
+              <li class="item" v-for="(item, index) in hotKey" :key="index" @click="addQuery(item.k)">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-list @select="addQuery" @delete="deleteOne" :searches="searchHistory"></search-list>
+          </div>
         </div>
-        <div class="search-history" v-show="searchHistory.length">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="clear" @click="showConfirm">
-              <i class="icon-clear"></i>
-            </span>
-          </h1>
-          <search-list @select="addQuery" @delete="deleteOne" :searches="searchHistory"></search-list>
-        </div>
-      </div>
+      </scroll>
     </div>
     <div class="search-result" v-show="query">
       <suggest @select="saveSearch" @listScroll="blurInput" :query="query"></suggest>
@@ -38,6 +40,7 @@ import Suggest from '../suggest/suggest'
 import { mapGetters, mapActions } from 'vuex'
 import SearchList from '../../base/search-list/search-list'
 import Confirm from '../../base/confirm/confirm'
+import Scroll from '../../base/scroll/scroll'
 
 export default {
   data() {
@@ -50,15 +53,26 @@ export default {
     SearchBox,
     Suggest,
     SearchList,
-    Confirm
+    Confirm,
+    Scroll
   },
   created() {
     this._getHotKey()
   },
   computed: {
-    ...mapGetters([
-      'searchHistory'
-    ])
+    shortcut() {
+      return this.hotKey.concat(this.searchHistory)
+    },
+    ...mapGetters(['searchHistory'])
+  },
+  watch: {
+    query(newQuery) {
+      if (!newQuery) {
+        setTimeout(() => {
+          this.$refs.shortcut.refresh()
+        }, 20)
+      }
+    }
   },
   methods: {
     deleteOne(item) {
@@ -86,11 +100,7 @@ export default {
     addQuery(query) {
       this.$refs.searchBox.setQuery(query)
     },
-    ...mapActions([
-      'saveSearchHistory',
-      'deleteSearchHistory',
-      'clearSearchHistory'
-    ])
+    ...mapActions(['saveSearchHistory', 'deleteSearchHistory', 'clearSearchHistory'])
   }
 }
 </script>
