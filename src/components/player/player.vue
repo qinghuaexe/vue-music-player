@@ -77,12 +77,12 @@
             <i @click.stop="togglePlaying" :class="miniIcon" class="icon-mini"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
-    <playlist></playlist>
+    <playlist ref="playlist"></playlist>
     <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
   </div>
 </template>
@@ -144,6 +144,9 @@ export default {
     this.touch = {}
   },
   methods: {
+    showPlaylist() {
+      this.$refs.playlist.show()
+    },
     back() {
       this.setFullScreen(false)
     },
