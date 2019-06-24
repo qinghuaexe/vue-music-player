@@ -15,7 +15,7 @@
         <div class="list-wrapper">
           <scroll class="list-scroll" v-if="currentIndex===0" :data="playHistory">
             <div class="list-inner">
-              <song-list :songs="playHistory" @selectSong="selectSong"></song-list>
+              <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
           </scroll>
         </div>
@@ -70,10 +70,10 @@ export default {
     },
     selectSong(song, index) {
       if (index !== 0) {
-        this.insetSong(new Song(song))
+        this.insertSong(new Song(song))
       }
     },
-    ...mapActions(['insetSong'])
+    ...mapActions(['insertSong'])
   }
 }
 </script>
