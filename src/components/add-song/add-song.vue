@@ -18,6 +18,11 @@
               <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
           </scroll>
+          <scroll class="list-scroll" v-if="currentIndex===1" :data="searchHistory">
+            <div class="list-inner">
+              <search-list @delete="deleteSearchHistory" @select="addQuery" :searches="searchHistory"></search-list>
+            </div>
+          </scroll>
         </div>
       </div>
       <div class="search-result" v-show="query">
@@ -35,6 +40,7 @@ import Scroll from '../../base/scroll/scroll'
 import { mapGetters, mapActions } from 'vuex'
 import SongList from '../../base/song-list/song-list'
 import Song from '../../common/js/song'
+import SearchList from '../../base/search-list/search-list'
 export default {
   mixins: [searchMixin],
   data() {
@@ -50,7 +56,8 @@ export default {
     Suggest,
     Switches,
     Scroll,
-    SongList
+    SongList,
+    SearchList
   },
   computed: {
     ...mapGetters(['playHistory'])
