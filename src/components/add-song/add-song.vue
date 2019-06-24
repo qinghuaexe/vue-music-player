@@ -15,13 +15,13 @@
         <div class="list-wrapper">
           <scroll class="list-scroll" v-if="currentIndex===0" :data="playHistory">
             <div class="list-inner">
-              <song-list :songs="playHistory"></song-list>
+              <song-list :songs="playHistory" @selectSong="selectSong"></song-list>
             </div>
           </scroll>
         </div>
       </div>
       <div class="search-result" v-show="query">
-        <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput" ></suggest>
+        <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"></suggest>
       </div>
     </div>
   </transition>
@@ -32,8 +32,9 @@ import Suggest from '../../components/suggest/suggest'
 import { searchMixin } from '../../common/js/mixin'
 import Switches from '../../base/switches/switches'
 import Scroll from '../../base/scroll/scroll'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import SongList from '../../base/song-list/song-list'
+import Song from '../../common/js/song'
 export default {
   mixins: [searchMixin],
   data() {
@@ -41,10 +42,7 @@ export default {
       showFlag: false,
       showSinger: false,
       currentIndex: 0,
-      switches: [
-        {name: '最近播放'},
-        {name: '搜索历史'}
-      ]
+      switches: [{ name: '最近播放' }, { name: '搜索历史' }]
     }
   },
   components: {
@@ -55,9 +53,7 @@ export default {
     SongList
   },
   computed: {
-    ...mapGetters([
-      'playHistory'
-    ])
+    ...mapGetters(['playHistory'])
   },
   methods: {
     show() {
@@ -71,7 +67,13 @@ export default {
     },
     switchItem(index) {
       this.currentIndex = index
-    }
+    },
+    selectSong(song, index) {
+      if (index !== 0) {
+        this.insetSong(new Song(song))
+      }
+    },
+    ...mapActions(['insetSong'])
   }
 }
 </script>
