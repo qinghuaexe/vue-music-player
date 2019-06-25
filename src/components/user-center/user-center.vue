@@ -5,7 +5,7 @@
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
-        <switches :currentIndex="currentIndex" :switches="switches"></switches>
+        <switches :currentIndex="currentIndex" :switches="switches" @switch="switchItem"></switches>
       </div>
       <div class="play-btn" ref="playBtn">
         <i class="icon-play"></i>
@@ -25,6 +25,11 @@ export default {
         {name: '我的收藏'},
         {name: '最近播放'}
       ]
+    }
+  },
+  methods: {
+    switchItem(index) {
+      this.currentIndex = index
     }
   },
   components: {
