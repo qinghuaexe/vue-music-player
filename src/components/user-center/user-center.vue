@@ -4,7 +4,9 @@
       <div class="back">
         <i class="icon-back"></i>
       </div>
-      <div class="switches-wrapper"></div>
+      <div class="switches-wrapper">
+        <switches :currentIndex="currentIndex" :switches="switches"></switches>
+      </div>
       <div class="play-btn" ref="playBtn">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
@@ -14,7 +16,21 @@
   </transition>
 </template>
 <script>
-export default {}
+import Switches from '../../base/switches/switches'
+export default {
+  data() {
+    return {
+      currentIndex: 0,
+      switches: [
+        {name: '我的收藏'},
+        {name: '最近播放'}
+      ]
+    }
+  },
+  components: {
+    Switches
+  }
+}
 </script>
 <style lang="stylus" scoped>
 @import '../../common/stylus/variable';
