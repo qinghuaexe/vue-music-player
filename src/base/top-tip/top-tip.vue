@@ -1,12 +1,29 @@
 <template>
   <transition name="drop">
-    <div class="top-tip">
+    <div class="top-tip" v-show="showFlag">
       <slot></slot>
     </div>
   </transition>
 </template>
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      showFlag: false
+    }
+  },
+  methods: {
+    show() {
+      this.showFlag = true
+      setTimeout(() => {
+        this.hide()
+      }, 1000)
+    },
+    hide() {
+      this.showFlag = false
+    }
+  }
+}
 </script>
 <style lang="stylus" scoped>
 @import '../../common/stylus/variable'
@@ -27,4 +44,3 @@ export default {}
   }
 }
 </style>
-
