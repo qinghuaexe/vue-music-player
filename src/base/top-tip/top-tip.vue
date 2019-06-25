@@ -1,12 +1,18 @@
 <template>
   <transition name="drop">
-    <div class="top-tip" v-show="showFlag">
+    <div class="top-tip" v-show="showFlag" @click.stop="hide">
       <slot></slot>
     </div>
   </transition>
 </template>
 <script>
 export default {
+  props: {
+    delay: {
+      type: Number,
+      default: 2000
+    }
+  },
   data() {
     return {
       showFlag: false
@@ -15,9 +21,10 @@ export default {
   methods: {
     show() {
       this.showFlag = true
-      setTimeout(() => {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
         this.hide()
-      }, 1000)
+      }, this.delay)
     },
     hide() {
       this.showFlag = false

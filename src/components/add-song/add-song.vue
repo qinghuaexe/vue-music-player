@@ -18,7 +18,7 @@
               <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
           </scroll>
-          <scroll class="list-scroll" v-if="currentIndex===1" :data="searchHistory">
+          <scroll class="list-scroll" v-if="currentIndex===1" :data="searchHistory" :refreshDelay="refreshDelay">
             <div class="list-inner">
               <search-list @delete="deleteSearchHistory" @select="addQuery" :searches="searchHistory"></search-list>
             </div>
@@ -55,7 +55,8 @@ export default {
       showFlag: false,
       showSinger: false,
       currentIndex: 0,
-      switches: [{ name: '最近播放' }, { name: '搜索历史' }]
+      switches: [{ name: '最近播放' }, { name: '搜索历史' }],
+      refreshDelay: 100
     }
   },
   components: {
